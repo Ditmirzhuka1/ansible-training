@@ -1,0 +1,26 @@
+---
+- name: Deploy Jinja2 template to Apache server
+  hosts: apache
+  become: true
+  vars:
+    template_src: template/index.html.j2
+    template_dest: /var/www/html/index.html
+
+  tasks:
+
+    - name: Install HTTPD package
+      package:
+        name: httpd
+        state: present
+
+    - name: Enable service
+      service:
+        name: httpd
+        state: started
+        enabled: yes
+
+    - name: Deploy Jinja2 template
+      template:
+        src: "{{ template_src }}"
+        dest: "{{ template_dest }}"  
+...

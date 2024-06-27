@@ -1,0 +1,10 @@
+all:
+  children:
+    extra:
+      hosts:
+        extra1:
+          ansible_host: 192.168.61.14
+        extra2:
+          ansible_host: 192.168.61.15
+      vars:
+        app: extra
