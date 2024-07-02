@@ -3,8 +3,13 @@
   hosts: apache
   become: true
   vars:
-    template_src: template/index.html.j2
+    template_src: ../template/index.html.j2
     template_dest: /var/www/html/index.html
+  vars_files: 
+    - ../ansible-vault/secret_var.yaml
+
+  handlers:
+    - import_tasks: ../tasks/httpd_restart.yaml
 
   tasks:
 
@@ -23,4 +28,24 @@
       template:
         src: "{{ template_src }}"
         dest: "{{ template_dest }}"  
+      notify: Restart Apache
+
+    - name: Check if /etc/os-release exists
+      stat:
+        path: /etc/os-release
+      register: os_release_file
+    - name: Output contents of /etc/os-release
+      slurp:
+        src: /etc/os-release
+      register: os_release_contents
+      when: os_release_file.stat.exists
+    - name: Print contents of /etc/os-release
+      debug:
+        var: os_release_contents.content | b64decode
+      when: os_release_file.stat.exists
+    - name: Print "Ciao" if /etc/os-release doesn't exist
+      debug:
+        msg: "Ciao"
+      when: not os_release_file.stat.exists
+    
 ...

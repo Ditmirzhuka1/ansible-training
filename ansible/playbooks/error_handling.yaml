@@ -1,0 +1,43 @@
+---
+- name: Demonstration Playbook
+  hosts: localhost
+  connection: local
+  vars:
+    demo_variable: "Hello, World!"
+  tasks:
+    - name: Check if custom_variable is set
+      when: custom_variable is defined
+      block:
+        - name: Display custom_variable when set
+          debug:
+            msg: "Custom variable: {{ custom_variable }}"
+      rescue:
+        - name: Display default message when custom_variable is not set
+          debug:
+            msg: "Custom variable is not defined. Using default value: {{ demo_variable }}"
+
+    - name: Run a shell command and fail if output contains 'error'
+      shell: "echo 'This is an error message'"
+      register: command_output
+      failed_when: "'error' in command_output.stdout"
+      ignore_errors: yes
+
+    - name: Display command output
+      debug:
+        var: command_output.stdout
+
+    - name: Demonstrate block/rescue usage
+      block:
+        - name: Run a command that fails
+          command: "nonexistent_command"
+        - name: This task will be skipped due to the previous failure
+          debug:
+            msg: "This task will not be executed"
+      rescue:
+        - name: Handle the failure
+          debug:
+            msg: "The command failed, but the playbook continues"
+
+    - name: Final task
+      debug:
+        msg: "Playbook execution completed"

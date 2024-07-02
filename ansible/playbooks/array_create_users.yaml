@@ -1,0 +1,12 @@
+---
+- name: Create user accounts
+  hosts: extra
+  become: true
+  vars_files:
+    - ../vars/users.yaml
+  tasks:
+    - name: Create user accounts
+      user:
+        name: "{{ item }}"
+        state: present
+      loop: "{{ users }}"

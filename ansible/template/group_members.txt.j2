@@ -1,0 +1,4 @@
+Group members of {{ group_names[0] }}:
+{% for host in groups[group_names[0]] %}
+- {{ host }}
+{% endfor %}
